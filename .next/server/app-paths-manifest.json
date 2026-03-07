@@ -1,0 +1,7 @@
+{
+  "/page": "app/page.js",
+  "/api/user/me/route": "app/api/user/me/route.js",
+  "/api/image-edit/route": "app/api/image-edit/route.js",
+  "/(studio)/pricing/page": "app/(studio)/pricing/page.js",
+  "/(studio)/image-edit/page": "app/(studio)/image-edit/page.js"
+}

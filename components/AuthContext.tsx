@@ -1,11 +1,10 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react'
-
-interface User { id: string; name: string; email: string; createdAt: string }
+import type { PublicUser } from '@/types'
 
 interface AuthCtx {
-  user: User | null
+  user: PublicUser | null
   token: string | null
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
@@ -16,18 +15,24 @@ interface AuthCtx {
 const AuthContext = createContext<AuthCtx | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<PublicUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
     const t = localStorage.getItem('pf_token')
     const u = localStorage.getItem('pf_user')
-    if (t && u) { setToken(t); setUser(JSON.parse(u)) }
-    setHydrated(true)
+    queueMicrotask(() => {
+      if (t && u) {
+        setToken(t)
+        setUser(JSON.parse(u))
+      }
+      setHydrated(true)
+    })
   }, [])
 
-  const persist = (u: User, t: string) => {
+  const persist = (u: PublicUser, t: string) => {
     setUser(u); setToken(t)
     localStorage.setItem('pf_token', t)
     localStorage.setItem('pf_user', JSON.stringify(u))

@@ -110,7 +110,7 @@ export default function ImageEditPage() {
               </div>
             </div>
 
-            {error && <Alert variant="destructive" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
+            {error && <Alert variant="error" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
 
             <button
               onClick={handleSubmit}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { comparePassword, signToken } from '@/lib/auth'
-import { UserStore } from '@/lib/userStore'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,13 +10,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 })
     }
 
-    const user = UserStore.findByEmail(email)
+    const normalizedEmail = email.trim().toLowerCase()
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (!user || !(await comparePassword(password, user.passwordHash))) {
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 })
     }
 
     const token = signToken({ userId: user.id, email: user.email })
-    return NextResponse.json({ user: UserStore.safe(user), token })
+    const { passwordHash: _, ...safeUser } = user
+    return NextResponse.json({ user: safeUser, token })
   } catch {
     return NextResponse.json({ message: 'Server error' }, { status: 500 })
   }

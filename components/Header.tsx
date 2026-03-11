@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/components/AuthContext'
-import { LogOut, User, Zap, CreditCard, Sparkles } from 'lucide-react'
+import { User, Zap, CreditCard, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const navLinks = [
@@ -18,7 +18,7 @@ export function Header() {
 
   useEffect(() => {
     if (!token) {
-      setCredits(null)
+      queueMicrotask(() => setCredits(null))
       return
     }
 

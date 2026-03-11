@@ -124,7 +124,7 @@ export default function PoseEditPage() {
               className="border border-white/10 bg-black/40 text-white placeholder:text-[#7b6c91]"
             />
 
-            {error && <Alert variant="destructive" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
+            {error && <Alert variant="error" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
 
             <button
               onClick={handleSubmit}

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/components/AuthContext";
 import { DropZone } from "@/components/DropZone";
 import { ResultPanel } from "@/components/ResultPanel";
 import { Button } from "@/components/ui/button";
@@ -127,7 +127,7 @@ export default function PoseEditorPage() {
           )}
 
           <Button onClick={handleSubmit} disabled={loading || !image} className="w-full">
-            {loading ? <><span className="spinner" /> Applying pose…</> : "Apply Pose →"}
+            {loading ? <><span className="h-3 w-3 animate-spin rounded-full border border-white/20 border-t-primary" /> Applying pose…</> : "Apply Pose →"}
           </Button>
         </div>
 
@@ -137,8 +137,9 @@ export default function PoseEditorPage() {
           <ResultPanel
             result={result}
             loading={loading}
-            loadingLabel="Transferring pose…"
-            emptyLabel="Pose result will appear here"
+
+            // loadingLabel="Transferring pose…"
+            label="Pose result will appear here"
           />
         </div>
       </div>

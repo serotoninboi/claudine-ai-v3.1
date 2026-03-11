@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-background text-foreground antialiased">
         <AuthProvider>
           <Header />
-          <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+          <main className="w-full flex-1">{children}</main>
         </AuthProvider>
       </body>
     </html>

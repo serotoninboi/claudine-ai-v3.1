@@ -1,7 +1,8 @@
 export interface PublicUser {
-  id: number;
-  name: string;
+  id: string;
+  name: string | null;
   email: string;
+  credits?: number;
   createdAt: Date;
 }
 

@@ -1,17 +1,22 @@
 'use client'
 import { useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '@/components/AuthContext'
 import { DropZone } from '@/components/DropZone'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert } from '@/components/ui/alert'
-import { Sparkles, Zap } from 'lucide-react'
+import { Sparkles, Zap, Bolt, Clock3 } from 'lucide-react'
+
+const FOCUS_TABS = [
+  { id: 'lighting', label: 'Lighting canvas', desc: 'Control gradients, flares, and volumetric haze.' },
+  { id: 'pose', label: 'Pose director', desc: 'Fine-tune limbs, gaze, and cinematic momentum.' },
+  { id: 'finish', label: 'Finishing polish', desc: 'Add grain, glow, and soft vignette flourishes.' },
+]
 
 const QUICK_PROMPTS = [
-  { label: 'Sunset', prompt: 'Shift the background to a molten sunset glow' },
-  { label: 'Cyberpunk', prompt: 'Neon outlines, rainy streets, cinematic lighting' },
-  { label: 'Oil Painting', prompt: 'Render it like a dramatic oil portrait with deep shadows' },
-  { label: 'Cinematic', prompt: 'Add volumetric light and theatrical lens flares' },
+  { label: 'Sunrise Aura', prompt: 'Melt the scene in molten light, draw soft smoke trails.' },
+  { label: 'Digital Noir', prompt: 'Rainy alley, neon edges, hyper-detailed reflections.' },
+  { label: 'Eternal Bronze', prompt: 'Warm, saturated, bronze skin against charcoal backdrop.' },
 ]
 
 export default function StudioPage() {
@@ -22,15 +27,16 @@ export default function StudioPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState('image')
+  const [activeFocus, setActiveFocus] = useState('lighting')
+  const [history, setHistory] = useState<string[]>([])
 
   const handleFile = useCallback((f: File) => {
     setFile(f)
     setResult(null)
     setError('')
-    const r = new FileReader()
-    r.onload = () => setPreview(r.result as string)
-    r.readAsDataURL(f)
+    const reader = new FileReader()
+    reader.onload = () => setPreview(reader.result as string)
+    reader.readAsDataURL(f)
   }, [])
 
   const clear = useCallback(() => {
@@ -59,6 +65,7 @@ export default function StudioPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.message)
       setResult(data.result)
+      setHistory(current => [data.result, ...current].slice(0, 3))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -67,122 +74,124 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-gradient-to-br from-[#ff2d78] to-transparent blur-[120px]
-                     opacity-50"
-      />
-      <div
-        className="pointer-events-none absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-[#a55bff]/50 to-transparent blur-[150px]"
-      />
-
-      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] max-w-[1400px] flex-col gap-8 px-4 py-10 lg:flex-row">
-        <section className="w-full max-w-xl space-y-6 rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,_rgba(255,255,255,0.05),_rgba(255,255,255,0))] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.8)] lg:sticky lg:top-10">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-[#f0dffb]">Studio</p>
-              <h1 className="text-3xl font-display tracking-tight text-white">Seductive Alchemy</h1>
+    <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,45,120,0.15),_transparent_50%),_radial-gradient(circle_at_10%_80%,_rgba(165,91,255,0.25),_transparent_50%)]">
+      <div className="pointer-events-none absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(140deg, rgba(255,45,120,0.1), transparent 60%)' }} />
+      <main className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col gap-12 px-4 py-12 lg:py-16">
+        <section className="rounded-[36px] border border-white/10 bg-black/60 p-8 shadow-[0_40px_90px_rgba(0,0,0,0.8)]">
+          <p className="text-[10px] uppercase tracking-[0.6em] text-[#d4c7f5]">Studio Core</p>
+          <h1 className="mt-3 text-4xl font-oxanium uppercase tracking-[0.2em] text-white sm:text-5xl">
+            Command your seductive edit flow
+          </h1>
+          <p className="mt-4 max-w-3xl readable-copy text-[13px] tracking-[0.35em] text-[#b7accd]">
+            Three sections keep you grounded: the navigation deck, the generative canvas, and the cinematic chronicle.
+          </p>
+          <div className="mt-6 flex items-center gap-4 text-[11px] uppercase tracking-[0.35em] text-[#f2e8ff]">
+            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-3">
+              <Zap size={18} className="text-[#ff6da0]" />
+              Real-time experiment stream
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.4em] text-[#f3c5e3]">
-              <Zap size={14} />
-              Live Engine
+            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-3">
+              <Sparkles size={18} className="text-[#a55bff]" />
+              120 frame pose recall
             </div>
           </div>
+        </section>
 
-          <div className="flex gap-3">
-            {['image', 'pose'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 rounded-2xl border px-3 py-2 text-[10px] font-mono uppercase tracking-[0.4em] transition ${
-                  activeTab === tab
-                    ? 'border-[#ff6da0] bg-gradient-to-r from-[#ff2d78]/40 to-[#a55bff]/20 text-white'
-                    : 'border-white/10 text-[#b1abc4] hover:border-[#ff2d78]/40 hover:text-white'
-                }`}
-              >
-                {tab === 'image' ? 'Image Edit' : 'Pose Studio'}
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-[#8f8397]">Source asset</p>
+        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="neon-panel relative space-y-6 overflow-hidden rounded-[34px] border border-white/10 p-6">
+            <div className="absolute right-0 top-0 h-full w-full bg-[radial-gradient(circle,_rgba(255,45,120,0.18),_transparent_60%)]" />
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.5em] text-[#d4c7f5]">
+                <span>Command Deck</span>
+                <span className="rounded-full border border-white/20 px-3 py-1 text-[10px]">Live</span>
+              </div>
               <DropZone onFile={handleFile} preview={preview} onClear={clear} />
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-[#7b6e8d]">Transformation prompt</p>
-              <Textarea
-                placeholder="Describe the transformation with cinematic precision..."
-                className="border border-white/15 bg-black/40 text-sm text-white placeholder:text-[#7c7092]"
-                value={prompt}
-                onChange={e => setPrompt(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <p className="text-[9px] font-mono uppercase tracking-[0.5em] text-[#6b6378]">quick prompts</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {QUICK_PROMPTS.map(p => (
+              <div className="space-y-2">
+                <p className="text-[9px] uppercase tracking-[0.5em] text-[#b7accd]">Prompt ritual</p>
+                <Textarea
+                  placeholder="Describe the transformation with fearless precision..."
+                  className="border border-white/10 bg-black/50 text-sm text-white placeholder:text-[#7c7092]"
+                  value={prompt}
+                  onChange={e => setPrompt(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {QUICK_PROMPTS.map(item => (
                   <button
-                    key={p.label}
-                    onClick={() => setPrompt(p.prompt)}
-                    className="rounded-2xl border border-white/10 bg-[#130014] px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-[#ffc3e5] transition hover:border-[#ff2d78] hover:text-white"
+                    key={item.label}
+                    onClick={() => setPrompt(item.prompt)}
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-[#ffc3e5] transition hover:border-[#ff6da0] hover:text-white"
                   >
-                    {p.label}
+                    {item.label}
                   </button>
                 ))}
               </div>
+              {error && (
+                <Alert variant="error" className="text-xs uppercase tracking-[0.3em]">
+                  {error}
+                </Alert>
+              )}
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !file}
+                className="neon-button w-full rounded-2xl px-6 py-4 text-[10px]"
+              >
+                {loading ? 'Forging mid-air…' : 'Summon the edit'}
+              </button>
             </div>
           </div>
 
-          {error && (
-            <Alert variant="destructive" className="text-xs uppercase tracking-[0.3em]">
-              {error}
-            </Alert>
-          )}
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !file}
-            className="neon-button w-full rounded-2xl py-4 text-[11px] font-bold uppercase tracking-[0.4em]"
-          >
-            {loading ? 'Forging...' : 'Generate Seduction'}
-          </button>
+          <div className="flex flex-col gap-5">
+            {FOCUS_TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveFocus(tab.id)}
+                className={`flex items-center justify-between rounded-[30px] border px-5 py-4 text-[11px] uppercase tracking-[0.4em] text-white transition ${
+                  activeFocus === tab.id
+                    ? 'border-[#ff6da0] bg-gradient-to-r from-[#ff2d78]/30 to-[#a55bff]/20 text-white'
+                    : 'border-white/10 text-[#b7accd] hover:border-[#ff6da0]/40'
+                }`}
+              >
+                <div>
+                  <p className="text-[8px] tracking-[0.6em] text-[#d4c7f5]">Focus</p>
+                  <p className="font-oxanium text-lg">{tab.label}</p>
+                </div>
+                <Bolt size={24} className="text-[#ff6da0]" />
+              </button>
+            ))}
+            <p className="readable-copy text-[11px] tracking-[0.4em] text-[#a8a0c4]">
+              {FOCUS_TABS.find(f => f.id === activeFocus)?.desc}
+            </p>
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-[#f6e4ff]">
+              <Clock3 size={16} />
+              Live computation latency 97ms
+            </div>
+          </div>
         </section>
 
-        <section className="relative flex-1 overflow-hidden rounded-[38px] border border-white/10 bg-black/60 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.9)]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(255,45,120,0.16),_transparent_55%)]" />
-          <div className="relative z-10 flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-[#b7accd]">Live Preview</p>
-                <p className="text-xs text-[#a08fb7]">Inspired by imggen.org</p>
+        <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="relative overflow-hidden rounded-[38px] border border-white/10 bg-black/70 p-6">
+            <div className="absolute inset-0 bg-[radial-gradient(circle,_rgba(255,45,120,0.12),_transparent_60%)]" />
+            <div className="relative z-10 flex flex-col gap-5">
+              <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.5em] text-[#d6cfee]">
+                <span>Preview</span>
+                <span>Streaming</span>
               </div>
-              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.4em] text-[#f0dffb]">
-                <span className="h-2 w-2 rounded-full bg-[#ff6da0]" />
-                Streaming
-              </div>
-            </div>
-
-            <div className="relative h-[480px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-[#050006] to-[#02000a]">
-              <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,45,120,0.25), transparent 60%)' }} />
               <AnimatePresence mode="wait">
                 {result ? (
                   <motion.img
                     key="result"
                     src={result}
                     alt="Result"
-                    className="relative z-10 h-full w-full object-contain"
-                    initial={{ opacity: 0, y: 15 }}
+                    className="relative z-10 h-[420px] w-full rounded-[28px] object-cover"
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    exit={{ opacity: 0, y: -20 }}
                   />
                 ) : loading ? (
                   <motion.div
                     key="loading"
-                    className="relative z-10 flex h-full flex-col items-center justify-center gap-4 text-center text-sm uppercase tracking-[0.3em] text-[#d1c5ef]"
+                    className="relative z-10 flex h-[420px] flex-col items-center justify-center gap-4 rounded-[28px] border border-white/10 bg-gradient-to-b from-[#050006] to-[#020005] text-center text-sm uppercase tracking-[0.3em] text-[#d1c5ef]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -190,34 +199,46 @@ export default function StudioPage() {
                     <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/10">
                       <Sparkles size={32} className="text-[#ff6da0]" />
                     </div>
-                    <p>Forging composition...</p>
+                    <p>Forging composition…</p>
                     <p className="text-[10px] text-[#8f8397]">AI cores 49% utilization</p>
                   </motion.div>
                 ) : (
                   <motion.div
                     key="empty"
-                    className="relative z-10 flex h-full flex-col items-center justify-center gap-4 text-center text-sm uppercase tracking-[0.3em] text-[#a08fb7]"
+                    className="relative z-10 flex h-[420px] flex-col items-center justify-center gap-4 rounded-[28px] border border-dashed border-white/20 bg-gradient-to-b from-[#060109] to-[#020003] text-center text-sm uppercase tracking-[0.3em] text-[#a08fb7]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <Sparkles size={36} className="text-[#ff2d78]" />
-                    <p>Ready to enchant</p>
-                    <p className="text-[10px] text-[#7a6f6d]">Upload a photo, describe the vibe, and let the engine breathe</p>
+                    <p>Upload an image + prompt to see the magic</p>
+                    <p className="text-[10px] text-[#6b6378]">Studio history auto-saves every variation</p>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-4 text-[10px] uppercase tracking-[0.4em] text-[#a08fb7]">
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                <p className="text-[12px] text-white">Credits left</p>
-                <p className="text-3xl font-bold text-[#ff6da0]">298</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                <p className="text-[12px] text-white">Latency</p>
-                <p className="text-3xl font-bold text-[#a55bff]">0.86s</p>
-              </div>
+          <div className="space-y-6 rounded-[36px] border border-white/10 bg-[linear-gradient(160deg,_rgba(255,45,120,0.08),_rgba(10,0,10,0.9))] p-6">
+            <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.4em] text-[#cfc9e7]">
+              <span>Studio chronicle</span>
+              <span className="rounded-full border border-white/20 px-3 py-1 text-[9px]">Latest</span>
+            </div>
+            <div className="space-y-4">
+              {history.length ? (
+                history.map(entry => (
+                  <div key={entry} className="rounded-3xl border border-white/10 bg-black/60 p-4 text-[11px] text-[#d1c5ef]">
+                    <p className="text-[11px] tracking-[0.3em]">Result snapshot</p>
+                    <p className="readable-copy text-[10px] text-[#8f8397]">{entry.slice(0, 22)}…</p>
+                  </div>
+                ))
+              ) : (
+                <p className="readable-copy text-[#8c879c]">Generate a look to populate your chronicle.</p>
+              )}
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-black/60 p-4">
+              <p className="section-lead">Session stats</p>
+              <p className="text-3xl font-oxanium text-white">{history.length} edits</p>
+              <p className="readable-copy text-[10px] text-[#ada0c2]">Updated live every time you push the button</p>
             </div>
           </div>
         </section>

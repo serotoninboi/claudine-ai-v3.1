@@ -14,6 +14,18 @@ const config: Config = {
         body: ['DM Mono', 'monospace'],
       },
       colors: {
+        primary: '#ff2d78',
+        background: '#030009',
+        foreground: '#fdfbff',
+        muted: {
+          DEFAULT: '#8c8fa4',
+          foreground: '#8c8fa4',
+        },
+        border: '#1e1e1e',
+        destructive: {
+          DEFAULT: '#ef4444',
+          foreground: '#fef2f2',
+        },
         pink: {
           50:  '#fff0f5',
           100: '#ffd6e7',

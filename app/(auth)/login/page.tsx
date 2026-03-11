@@ -62,7 +62,7 @@ function LoginForm() {
           autoComplete="current-password"
           className="border border-white/10 bg-black/40 text-white placeholder:text-[#7c7092]"
         />
-        {error && <Alert variant="destructive" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
+        {error && <Alert variant="error" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
         <button
           type="submit"
           disabled={loading}

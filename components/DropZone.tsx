@@ -80,7 +80,7 @@ export function DropZone({ onFile, preview, onClear }: DropZoneProps) {
         className="hidden"
         onChange={e => {
           const file = e.target.files?.[0]
-          delete e.target.value
+          e.target.value = ''
           if (file) handleFile(file)
         }}
       />

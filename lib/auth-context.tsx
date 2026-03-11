@@ -17,14 +17,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Rehydrate from localStorage on mount
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const storedToken = localStorage.getItem("pf_token");
     const storedUser = localStorage.getItem("pf_user");
-    if (storedToken && storedUser) {
+    if (!(storedToken && storedUser)) return;
+
+    queueMicrotask(() => {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-    }
+    });
   }, []);
 
   const persist = (u: PublicUser, t: string) => {

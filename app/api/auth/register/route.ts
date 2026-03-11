@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hashPassword, signToken } from '@/lib/auth'
-import { UserStore } from '@/lib/userStore'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,16 +12,25 @@ export async function POST(req: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json({ message: 'Password must be at least 8 characters' }, { status: 400 })
     }
-    if (UserStore.findByEmail(email)) {
+    const normalizedEmail = email.trim().toLowerCase()
+    if (await prisma.user.findUnique({ where: { email: normalizedEmail } })) {
       return NextResponse.json({ message: 'An account with this email already exists' }, { status: 409 })
     }
 
     const passwordHash = await hashPassword(password)
-    const user = UserStore.create({ name: name.trim(), email, passwordHash })
+    const user = await prisma.user.create({
+      data: {
+        name: name?.trim() || null,
+        email: normalizedEmail,
+        passwordHash,
+      },
+    })
     const token = signToken({ userId: user.id, email: user.email })
 
-    return NextResponse.json({ user: UserStore.safe(user), token }, { status: 201 })
-  } catch {
+    const { passwordHash: _, ...safeUser } = user
+    return NextResponse.json({ user: safeUser, token }, { status: 201 })
+  } catch(e) {
+    console.error('Error during registration', e)
     return NextResponse.json({ message: 'Server error' }, { status: 500 })
   }
 }

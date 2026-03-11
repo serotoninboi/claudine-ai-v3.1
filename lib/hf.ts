@@ -3,7 +3,7 @@
  * Handles cold-start 503s with automatic retry + exponential backoff
  */
 
-const HF_API = 'https://api-inference.huggingface.co'
+const HF_API = 'https://router.huggingface.co'
 
 export function getHFToken(): string {
   const token = process.env.HUGGINGFACE_TOKEN

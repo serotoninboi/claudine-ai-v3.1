@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@huggingface/inference':
+        specifier: ^4.13.15
+        version: 4.13.15
       '@prisma/client':
         specifier: ^5.10.2
         version: 5.22.0(prisma@5.22.0)
@@ -78,6 +81,9 @@ importers:
         specifier: ^4.5.1
         version: 4.5.7(@types/react@18.3.28)(react@18.3.1)
     devDependencies:
+      '@gradio/client':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
@@ -132,6 +138,21 @@ packages:
 
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
+
+  '@gradio/client@2.1.0':
+    resolution: {integrity: sha512-LyDyvpueETaZI62xbjaLa74iSrtsbib6c2uhzxML0eSYkfX553imlK5Nu9NIcwMU2+ULAsCqUCutgd0PeCumww==}
+    engines: {node: '>=18.0.0'}
+
+  '@huggingface/inference@4.13.15':
+    resolution: {integrity: sha512-V7B13KFDVhYkQqgx8vpMcmtEG+PoePlh65IUvpphTTItHAq6zRLcsS4torh1QavUaT+6nEwho4wFXzBQNGBwKQ==}
+    engines: {node: '>=18'}
+
+  '@huggingface/jinja@0.5.6':
+    resolution: {integrity: sha512-MyMWyLnjqo+KRJYSH7oWNbsOn5onuIvfXYPcc0WOGxU0eHUV7oAYUoQTl2BMdu7ml+ea/bu11UM+EshbeHwtIA==}
+    engines: {node: '>=18'}
+
+  '@huggingface/tasks@0.19.90':
+    resolution: {integrity: sha512-nfV9luJbvwGQ/5oKXkKhCV9h4X7mwh1YaGG3ORd6UMLDSwr1OFSSatcBX0O9OtBtmNK19aGSjbLFqqgcIR6+IA==}
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -959,6 +980,9 @@ packages:
       picomatch:
         optional: true
 
+  fetch-event-stream@0.1.6:
+    resolution: {integrity: sha512-GREtJ5HNikdU2AXtZ6E/5bk+aslMU6ie5mPG6H9nvsdDkkHQ6m5lHwmmmDTOBexok9hApQ7EprsXCdmz9ZC68w==}
+
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
@@ -1494,6 +1518,19 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@floating-ui/utils@0.2.11': {}
+
+  '@gradio/client@2.1.0':
+    dependencies:
+      fetch-event-stream: 0.1.6
+
+  '@huggingface/inference@4.13.15':
+    dependencies:
+      '@huggingface/jinja': 0.5.6
+      '@huggingface/tasks': 0.19.90
+
+  '@huggingface/jinja@0.5.6': {}
+
+  '@huggingface/tasks@0.19.90': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -2214,6 +2251,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
+
+  fetch-event-stream@0.1.6: {}
 
   fill-range@7.1.1:
     dependencies:

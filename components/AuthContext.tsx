@@ -31,6 +31,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(u); setToken(t)
     localStorage.setItem('pf_token', t)
     localStorage.setItem('pf_user', JSON.stringify(u))
+    // Set cookie for middleware (will be picked up by nextjs)
+    document.cookie = `pf_token=${t}; path=/; sameSite=lax; max-age=2592000` // 30 days
   }
 
   const login = useCallback(async (email: string, password: string) => {
@@ -59,6 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null); setToken(null)
     localStorage.removeItem('pf_token')
     localStorage.removeItem('pf_user')
+    // Clear cookie
+    document.cookie = 'pf_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
   }, [])
 
   if (!hydrated) return null

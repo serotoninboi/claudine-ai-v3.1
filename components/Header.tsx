@@ -27,7 +27,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-black/60 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group" aria-label="PixelForge Home">
             <div className="w-7 h-7 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,45,120,0.3)] group-hover:scale-110 transition-transform duration-300">
               <Sparkles size={14} className="text-white fill-white" />
             </div>
@@ -40,10 +40,18 @@ export function Header() {
             <Link 
               href="/studio" 
               className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${
-                pathname === '/studio' ? 'text-primary' : 'text-muted-foreground hover:text-white'
+                pathname === '/studio' || pathname === '/image-edit' ? 'text-primary' : 'text-muted-foreground hover:text-white'
               }`}
             >
               Studio
+            </Link>
+            <Link 
+              href="/pose-edit" 
+              className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${
+                pathname === '/pose-edit' ? 'text-primary' : 'text-muted-foreground hover:text-white'
+              }`}
+            >
+              Pose Edit
             </Link>
             <Link 
               href="/pricing" 

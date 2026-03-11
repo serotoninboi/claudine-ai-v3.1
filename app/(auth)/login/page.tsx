@@ -1,12 +1,17 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/components/AuthContext'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
+import { Suspense } from 'react'
 
-export default function LoginPage() {
+function LoginForm() {
   const { login } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/studio'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,7 +21,10 @@ export default function LoginPage() {
     e.preventDefault()
     if (!email || !password) { setError('All fields required'); return }
     setLoading(true); setError('')
-    try { await login(email, password) }
+    try { 
+      await login(email, password)
+      router.push(redirect)
+    }
     catch (err) { setError(err instanceof Error ? err.message : 'Login failed') }
     finally { setLoading(false) }
   }
@@ -102,3 +110,10 @@ export default function LoginPage() {
   )
 }
 
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[70vh]"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>}>
+      <LoginForm />
+    </Suspense>
+  )
+}

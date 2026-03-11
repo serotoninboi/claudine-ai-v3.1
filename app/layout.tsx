@@ -4,8 +4,19 @@ import { AuthProvider } from '@/components/AuthContext'
 import { Header } from '@/components/Header'
 
 export const metadata: Metadata = {
-  title: 'PixelForge – AI Image Studio',
-  description: 'Edit images and poses with AI',
+  title: {
+    default: 'PixelForge – AI Image Studio',
+    template: '%s | PixelForge',
+  },
+  description: 'Edit images and poses with AI - Create stunning visual content with advanced AI tools',
+  keywords: ['AI', 'image editing', 'pose estimation', 'AI studio', 'image processing'],
+  authors: [{ name: 'PixelForge' }],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  themeColor: '#080808',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -16,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body style={{ background: '#0a0a0a' }}>
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <AuthProvider>
           <Header />
           <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>

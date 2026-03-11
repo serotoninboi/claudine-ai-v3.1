@@ -1,12 +1,16 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/components/AuthContext'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
 
-export default function RegisterPage() {
+function RegisterForm() {
   const { register } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/studio'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,7 +24,10 @@ export default function RegisterPage() {
     if (password !== confirm) { setError('Passwords do not match'); return }
     if (password.length < 8) { setError('Password must be at least 8 characters'); return }
     setLoading(true); setError('')
-    try { await register(name, email, password) }
+    try { 
+      await register(name, email, password)
+      router.push(redirect)
+    }
     catch (err) { setError(err instanceof Error ? err.message : 'Registration failed') }
     finally { setLoading(false) }
   }
@@ -88,3 +95,10 @@ export default function RegisterPage() {
   )
 }
 
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[70vh]"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>}>
+      <RegisterForm />
+    </Suspense>
+  )
+}

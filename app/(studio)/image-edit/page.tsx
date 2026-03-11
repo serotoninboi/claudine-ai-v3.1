@@ -77,7 +77,7 @@ export default function ImageEditPage() {
           <h1 className="font-display text-3xl font-bold tracking-tight" style={{ color: '#f0eae8' }}>
             Image Editor
           </h1>
-          <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em]" style={{ color: '#3d3636' }}>
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em]" style={{ color: '#8a8583' }}>
             Describe your edit — AI handles the rest
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function ImageEditPage() {
 
           {/* Quick prompts */}
           <div>
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#3d3636' }}>
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#8a8583' }}>
               Quick prompts
             </span>
             <div className="flex flex-wrap gap-2">

@@ -7,7 +7,7 @@ export default function HomePage() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
   useEffect(() => {
-    router.replace(isAuthenticated ? '/image-edit' : '/login')
+    router.replace(isAuthenticated ? '/studio' : '/login')
   }, [isAuthenticated, router])
   return null
 }

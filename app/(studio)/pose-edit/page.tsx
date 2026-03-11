@@ -80,7 +80,7 @@ export default function PoseEditPage() {
         <h1 className="font-display text-3xl font-bold tracking-tight" style={{ color: '#f0eae8' }}>
           Pose Editor
         </h1>
-        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em]" style={{ color: '#3d3636' }}>
+        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em]" style={{ color: '#8a8583' }}>
           Retarget any character to a new pose
         </p>
       </div>
@@ -88,7 +88,7 @@ export default function PoseEditPage() {
       <div className="grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-5">
           <div>
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#3d3636' }}>
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#8a8583' }}>
               Source image
             </span>
             <DropZone onFile={handleFile} preview={preview} onClear={clear} />
@@ -96,7 +96,7 @@ export default function PoseEditPage() {
 
           {/* Pose presets grid */}
           <div>
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#3d3636' }}>
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] font-mono" style={{ color: '#8a8583' }}>
               Select pose
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -126,7 +126,7 @@ export default function PoseEditPage() {
                     >
                       {p.label}
                     </span>
-                    <span className="text-[9px] font-mono leading-none" style={{ color: '#3d3636' }}>
+                    <span className="text-[9px] font-mono leading-none" style={{ color: '#6a6563' }}>
                       {p.desc}
                     </span>
                   </button>

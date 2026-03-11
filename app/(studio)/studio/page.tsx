@@ -57,15 +57,7 @@ export default function StudioPage() {
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden bg-[#050505]">
-      {/* Left Sidebar - Tools */}
-      <aside className="w-16 border-r border-white/5 flex flex-col items-center py-6 gap-6 bg-black/40 backdrop-blur-xl">
-        <ToolIcon icon={ImageIcon} active={activeTab === 'edit'} onClick={() => setActiveTab('edit')} label="Studio" />
-        <ToolIcon icon={Layers} active={activeTab === 'layers'} onClick={() => setActiveTab('layers')} label="Layers" />
-        <ToolIcon icon={History} active={activeTab === 'history'} onClick={() => setActiveTab('history')} label="History" />
-        <div className="mt-auto">
-          <ToolIcon icon={Settings} active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} label="Settings" />
-        </div>
-      </aside>
+
 
       {/* Main Content Area */}
       <main className="flex-1 flex overflow-hidden">

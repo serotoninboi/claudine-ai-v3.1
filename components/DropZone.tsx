@@ -14,83 +14,84 @@ export function DropZone({ onFile, preview, onClear }: DropZoneProps) {
   const [dragging, setDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) return
-    onFile(file)
-  }, [onFile])
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.type.startsWith('image/')) return
+      onFile(file)
+    },
+    [onFile]
+  )
 
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setDragging(false)
-    const file = e.dataTransfer.files[0]
-    if (file) handleFile(file)
-  }, [handleFile])
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setDragging(false)
+      const file = e.dataTransfer.files[0]
+      if (file) handleFile(file)
+    },
+    [handleFile]
+  )
 
   return (
-    <div className="relative">
+    <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-[#0a0210] via-[#050006] to-[#050004] shadow-[0_0_40px_rgba(5,0,20,0.9)]">
       <div
-        className={cn('drop-zone relative min-h-[200px] transition-all duration-200 cursor-pointer flex flex-col items-center justify-center')}
+        className={cn(
+          'absolute inset-0 transition duration-500',
+          dragging ? 'opacity-100' : 'opacity-0'
+        )}
         style={{
-          borderColor: dragging ? '#ff2d78' : (preview ? '#1a1a1a' : '#1e1e1e'),
-          background: dragging ? 'rgba(255,45,120,0.04)' : '#0e0e0e',
-          boxShadow: dragging ? '0 0 20px rgba(255,45,120,0.15)' : 'none',
+          background: 'radial-gradient(circle, rgba(255,45,120,0.45), transparent 55%)',
         }}
-        onDragOver={e => { e.preventDefault(); setDragging(true) }}
+      />
+      <div
+        className="relative min-h-[220px] rounded-3xl p-6 flex flex-col items-center justify-center gap-4 text-center text-[11px] font-mono uppercase tracking-[0.3em] text-muted-foreground transition-all duration-200"
+        onDragOver={e => {
+          e.preventDefault()
+          setDragging(true)
+        }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
         onClick={() => !preview && inputRef.current?.click()}
+        style={{
+          cursor: 'pointer',
+        }}
       >
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-black/60 text-white">
+          <Upload size={20} className="text-[#ff6da0]" />
+        </div>
         {preview ? (
           <img
             src={preview}
             alt="Preview"
-            className="max-h-[200px] w-full object-contain"
+            className="relative z-10 max-h-48 w-full rounded-2xl object-contain"
           />
         ) : (
-          <div className="flex flex-col items-center gap-3 p-8 text-center">
-            <div
-              className="flex h-10 w-10 items-center justify-center border"
-              style={{ borderColor: '#1e1e1e', background: '#111111' }}
-            >
-              <Upload size={16} style={{ color: '#3d3636' }} />
-            </div>
-            <div>
-              <p className="text-[11px] font-mono uppercase tracking-[0.15em]" style={{ color: '#3d3636' }}>
-                Drop image here
-              </p>
-              <p className="mt-1 text-[10px] font-mono" style={{ color: '#2a2a2a' }}>
-                PNG · JPG · WEBP
-              </p>
-            </div>
+          <div className="relative flex flex-col items-center gap-1 text-[10px] text-[#b0a5c6]">
+            <span>Drop image here</span>
+            <span className="text-[8px] tracking-[0.4em] text-[#797088]">PNG · JPG · WEBP</span>
           </div>
         )}
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
-        />
+        <span className="hidden text-[9px] uppercase tracking-[0.4em] text-[#7a6f6d] lg:block">Click to browse</span>
       </div>
-
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={e => {
+          const file = e.target.files?.[0]
+          delete e.target.value
+          if (file) handleFile(file)
+        }}
+      />
       {preview && onClear && (
         <button
           onClick={onClear}
-          className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center border transition-all duration-200"
-          style={{ background: 'rgba(10,10,10,0.9)', borderColor: '#2a2a2a', color: '#7a6f6d' }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = '#ff2d78'
-            e.currentTarget.style.color = '#ff2d78'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = '#2a2a2a'
-            e.currentTarget.style.color = '#7a6f6d'
-          }}
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white transition hover:border-[#ff2d78] hover:text-[#ff2d78]"
         >
-          <X size={11} />
+          <X size={14} />
         </button>
       )}
     </div>
   )
 }
-

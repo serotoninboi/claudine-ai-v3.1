@@ -1,11 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/components/AuthContext'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
-import { Suspense } from 'react'
 
 function LoginForm() {
   const { login } = useAuth()
@@ -19,90 +18,62 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || !password) { setError('All fields required'); return }
-    setLoading(true); setError('')
-    try { 
+    if (!email || !password) {
+      setError('All fields required')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
       await login(email, password)
       router.push(redirect)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed')
+    } finally {
+      setLoading(false)
     }
-    catch (err) { setError(err instanceof Error ? err.message : 'Login failed') }
-    finally { setLoading(false) }
   }
 
   return (
-    <div className="fade-up flex flex-col gap-8">
-      {/* Header */}
-      <div className="text-center">
-        <div className="mb-6">
-          <span className="text-[10px] font-mono tracking-[0.4em] uppercase" style={{ color: '#ff2d78' }}>
-            PIXEL
-          </span>
-          <span className="text-[10px] font-mono tracking-[0.4em] uppercase ml-2" style={{ color: '#f0eae8' }}>
-            FORGE
-          </span>
-        </div>
-        <h1 className="text-2xl font-display font-semibold tracking-tight" style={{ color: '#f0eae8' }}>
-          Welcome back
-        </h1>
-        <p className="mt-1.5 text-[11px] font-mono uppercase tracking-[0.2em]" style={{ color: '#3d3636' }}>
-          Sign in to continue
-        </p>
+    <div className="fade-up mx-auto flex w-full max-w-md flex-col gap-8 rounded-[32px] border border-white/10 bg-black/70 p-8 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+      <div className="space-y-3 text-center">
+        <p className="text-[10px] font-mono uppercase tracking-[0.6em] text-[#ffb4d7]">Welcome back</p>
+        <h1 className="text-3xl font-display font-bold tracking-tight text-white">Sign in</h1>
+        <p className="text-[11px] uppercase tracking-[0.3em] text-[#7a6f6d]">Continue crafting seductive imagery</p>
       </div>
-
-      {/* Form */}
-      <div className="border p-6 flex flex-col gap-5" style={{ background: '#0e0e0e', borderColor: '#1a1a1a' }}>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input
-            id="email"
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            autoComplete="email"
-          />
-          <Input
-            id="password"
-            label="Password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
-          {error && <Alert variant="error">{error}</Alert>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-1 h-10 w-full border font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-40"
-            style={{ borderColor: '#ff2d78', color: '#ff2d78', background: 'rgba(255,45,120,0.06)' }}
-            onMouseEnter={e => {
-              if (!loading) {
-                e.currentTarget.style.background = 'rgba(255,45,120,0.12)'
-                e.currentTarget.style.boxShadow = '0 0 16px rgba(255,45,120,0.2)'
-              }
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(255,45,120,0.06)'
-              e.currentTarget.style.boxShadow = 'none'
-            }}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                </svg>
-                Signing in
-              </span>
-            ) : 'Sign in'}
-          </button>
-        </form>
-      </div>
-
-      <p className="text-center text-[10px] font-mono uppercase tracking-[0.15em]" style={{ color: '#3d3636' }}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          id="email"
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          autoComplete="email"
+          className="border border-white/10 bg-black/40 text-white placeholder:text-[#7c7092]"
+        />
+        <Input
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          autoComplete="current-password"
+          className="border border-white/10 bg-black/40 text-white placeholder:text-[#7c7092]"
+        />
+        {error && <Alert variant="destructive" className="text-xs uppercase tracking-[0.3em]">{error}</Alert>}
+        <button
+          type="submit"
+          disabled={loading}
+          className="neon-button w-full rounded-2xl py-3 text-[11px] font-bold uppercase tracking-[0.4em]"
+        >
+          {loading ? 'Signing in…' : 'Sign in'}
+        </button>
+      </form>
+      <p className="text-center text-[10px] uppercase tracking-[0.3em] text-[#7a6f6d]">
         No account?{' '}
-        <Link href="/register" className="transition-colors duration-200" style={{ color: '#ff2d78' }}>
+        <Link href="/register" className="text-[#ff6da0] underline-offset-4 hover:text-white">
           Create one
         </Link>
       </p>
@@ -112,8 +83,17 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[70vh]"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>}>
-      <LoginForm />
-    </Suspense>
+    <main className="relative flex min-h-screen items-center justify-center px-4 py-16">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,45,120,0.15),_transparent_55%)]" />
+      <Suspense
+        fallback={
+          <div className="flex min-h-[70vh] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-[#ff2d78]" />
+          </div>
+        }
+      >
+        <LoginForm />
+      </Suspense>
+    </main>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useAuth } from '@/components/AuthContext'
+import { useAuth } from '@/lib/auth-context'
 import { DropZone } from '@/components/DropZone'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert } from '@/components/ui/alert'

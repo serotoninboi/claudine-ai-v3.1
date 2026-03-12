@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useAuth } from '@/components/AuthContext'
+import { useAuth } from '@/lib/auth-context'
 import { Sparkles, CreditCard, ShieldCheck, Zap } from 'lucide-react'
 
 const ACTIVITY = [

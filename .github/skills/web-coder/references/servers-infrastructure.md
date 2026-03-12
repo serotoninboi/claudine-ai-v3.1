@@ -187,7 +187,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://db:5432
+      - NEXT_PUBLIC_SUPABASE_URL=postgres://db:5432
   db:
     image: postgres:15
     environment:
@@ -382,7 +382,7 @@ Configuration without hardcoding.
 
 ```bash
 # .env file
-DATABASE_URL=postgresql://localhost/mydb
+NEXT_PUBLIC_SUPABASE_URL=postgresql://localhost/mydb
 API_KEY=secret-key-here
 NODE_ENV=production
 ```
@@ -390,7 +390,7 @@ NODE_ENV=production
 ```javascript
 // Access in Node.js
 require('dotenv').config();
-const dbUrl = process.env.DATABASE_URL;
+const dbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 ```
 
 **Best Practices**:

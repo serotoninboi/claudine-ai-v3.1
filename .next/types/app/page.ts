@@ -1,4 +1,4 @@
-// File: /home/s0/Téléchargements/claudine-ai-v3.1/app/page.tsx
+// File: /home/s0/Projects/claudine/app/page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

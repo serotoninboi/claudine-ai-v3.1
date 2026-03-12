@@ -10,14 +10,14 @@ Vous avez besoin d'une instance PostgreSQL. Nous recommandons :
 - **Neon.tech** (Serverless PostgreSQL)
 - **Railway** (Facile à configurer)
 
-Récupérez votre `DATABASE_URL` (ex: `postgresql://user:password@host:port/dbname`).
+Récupérez votre `NEXT_PUBLIC_SUPABASE_URL` (ex: `postgresql://user:password@host:port/dbname`).
 
 ### 2. Configuration des Variables d'Environnement
 Créez un fichier `.env` à la racine du projet (ou configurez-les sur votre plateforme de déploiement) :
 
 ```env
 # Base de données
-DATABASE_URL="votre_url_postgresql"
+NEXT_PUBLIC_SUPABASE_URL="votre_url_postgresql"
 
 # Hugging Face (pour l'IA)
 HUGGINGFACE_TOKEN="votre_token_hf"

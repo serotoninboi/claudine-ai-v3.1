@@ -1,6 +1,6 @@
 'use client'
 import { useState, useCallback } from 'react'
-import { useAuth } from '@/components/AuthContext'
+import { useAuth } from '@/lib/auth-context'
 import { DropZone } from '@/components/DropZone'
 import { ResultPanel } from '@/components/ResultPanel'
 import { Textarea } from '@/components/ui/textarea'

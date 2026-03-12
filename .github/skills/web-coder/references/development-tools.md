@@ -463,14 +463,14 @@ Open Chrome DevTools > Lighthouse tab
 
 ```bash
 # .env
-DATABASE_URL=postgres://localhost/db
+NEXT_PUBLIC_SUPABASE_URL=postgres://localhost/db
 API_KEY=secret-key-here
 NODE_ENV=development
 ```
 
 ```javascript
 // Access in Node.js
-const dbUrl = process.env.DATABASE_URL;
+const dbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 ```
 
 ## Glossary Terms

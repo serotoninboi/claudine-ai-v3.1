@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@/components/AuthContext'
+import { useAuth } from '@/lib/auth-context'
 import { User, Zap, CreditCard, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 

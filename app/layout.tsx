@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { AuthProvider } from '@/components/AuthContext'
+import { AuthProvider } from '@/lib/auth-context'
 import { Header } from '@/components/Header'
 
 export const metadata: Metadata = {

@@ -1,9 +1,4 @@
 {
-  "/api/user/me/route": "app/api/user/me/route.js",
-  "/api/image-edit/route": "app/api/image-edit/route.js",
-  "/(studio)/pricing/page": "app/(studio)/pricing/page.js",
-  "/(studio)/pose-edit/page": "app/(studio)/pose-edit/page.js",
-  "/(studio)/studio/page": "app/(studio)/studio/page.js",
-  "/(auth)/register/page": "app/(auth)/register/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js"
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js"
 }

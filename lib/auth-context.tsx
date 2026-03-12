@@ -1,72 +1,134 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { createClient } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 import type { PublicUser } from "@/types";
 
 interface AuthCtx {
   user: PublicUser | null;
-  token: string | null;
+  supabaseUser: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
+  // Initialize auth state from Supabase session
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storedToken = localStorage.getItem("pf_token");
-    const storedUser = localStorage.getItem("pf_user");
-    if (!(storedToken && storedUser)) return;
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setSupabaseUser(session.user);
+          // Fetch user profile from database
+          const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (profile) {
+            setUser({
+              id: profile.id,
+              email: profile.email,
+              name: profile.name,
+              credits: profile.credits,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Auth init error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    queueMicrotask(() => {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    });
-  }, []);
+    initAuth();
 
-  const persist = (u: PublicUser, t: string) => {
-    setUser(u);
-    setToken(t);
-    localStorage.setItem("pf_token", t);
-    localStorage.setItem("pf_user", JSON.stringify(u));
-  };
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setSupabaseUser(session.user);
+          const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (profile) {
+            setUser({
+              id: profile.id,
+              email: profile.email,
+              name: profile.name,
+              credits: profile.credits,
+            });
+          }
+        } else {
+          setSupabaseUser(null);
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [supabase]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    persist(data.user, data.token);
-  }, []);
+    if (error) throw new Error(error.message);
+    if (data.user) {
+      setSupabaseUser(data.user);
+    }
+  }, [supabase]);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name },
+      },
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    persist(data.user, data.token);
-  }, []);
+    if (error) throw new Error(error.message);
+    if (data.user) {
+      setSupabaseUser(data.user);
+    }
+  }, [supabase]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw new Error(error.message);
     setUser(null);
-    setToken(null);
-    localStorage.removeItem("pf_token");
-    localStorage.removeItem("pf_user");
-  }, []);
+    setSupabaseUser(null);
+  }, [supabase]);
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, register, logout }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        supabaseUser,
+        isAuthenticated: !!supabaseUser, 
+        isLoading,
+        login, 
+        register, 
+        logout 
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,17 +1,21 @@
-import { NextResponse } from 'next/server'
+import { updateSession } from '@/lib/supabase-middleware'
 import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
 // Define protected and auth routes
 const protectedRoutes = ['/studio', '/image-edit', '/pose-edit', '/pricing']
 const authRoutes = ['/login', '/register']
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Check for auth token in cookies
-  const token = request.cookies.get('pf_token')?.value
+  // Update Supabase session
+  let response = await updateSession(request)
 
-  const isAuthenticated = !!token
+  // Check for Supabase auth cookie
+  const supabaseSession = request.cookies.get('sb-auth-token')?.value
+  const isAuthenticated = !!supabaseSession
+
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
 
@@ -27,7 +31,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {

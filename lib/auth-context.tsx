@@ -1,134 +1,72 @@
 "use client";
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { createClient } from "@/lib/supabase";
-import type { User } from "@supabase/supabase-js";
 import type { PublicUser } from "@/types";
 
 interface AuthCtx {
   user: PublicUser | null;
-  supabaseUser: User | null;
+  token: string | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
-  const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
+  const [token, setToken] = useState<string | null>(null);
 
-  // Initialize auth state from Supabase session
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setSupabaseUser(session.user);
-          // Fetch user profile from database
-          const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (profile) {
-            setUser({
-              id: profile.id,
-              email: profile.email,
-              name: profile.name,
-              credits: profile.credits,
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Auth init error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (typeof window === "undefined") return;
+    const storedToken = localStorage.getItem("pf_token");
+    const storedUser = localStorage.getItem("pf_user");
+    if (!(storedToken && storedUser)) return;
 
-    initAuth();
+    queueMicrotask(() => {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    });
+  }, []);
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setSupabaseUser(session.user);
-          const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (profile) {
-            setUser({
-              id: profile.id,
-              email: profile.email,
-              name: profile.name,
-              credits: profile.credits,
-            });
-          }
-        } else {
-          setSupabaseUser(null);
-          setUser(null);
-        }
-      }
-    );
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [supabase]);
+  const persist = (u: PublicUser, t: string) => {
+    setUser(u);
+    setToken(t);
+    localStorage.setItem("pf_token", t);
+    localStorage.setItem("pf_user", JSON.stringify(u));
+  };
 
   const login = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
-    if (error) throw new Error(error.message);
-    if (data.user) {
-      setSupabaseUser(data.user);
-    }
-  }, [supabase]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    persist(data.user, data.token);
+  }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { name },
-      },
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
     });
-    if (error) throw new Error(error.message);
-    if (data.user) {
-      setSupabaseUser(data.user);
-    }
-  }, [supabase]);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    persist(data.user, data.token);
+  }, []);
 
-  const logout = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw new Error(error.message);
+  const logout = useCallback(() => {
     setUser(null);
-    setSupabaseUser(null);
-  }, [supabase]);
+    setToken(null);
+    localStorage.removeItem("pf_token");
+    localStorage.removeItem("pf_user");
+  }, []);
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        supabaseUser,
-        isAuthenticated: !!supabaseUser, 
-        isLoading,
-        login, 
-        register, 
-        logout 
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

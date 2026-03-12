@@ -2,7 +2,7 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '@/components/AuthContext'
 import { Input } from '@/components/ui/input'
 import { Alert } from '@/components/ui/alert'
 
